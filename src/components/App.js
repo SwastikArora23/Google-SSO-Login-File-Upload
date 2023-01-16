@@ -192,7 +192,7 @@ function App () {
           <tbody>
             {filesList.length > 0 ? (
               filesList.map(
-                ({ _id, title, description, file_path, file_mimetype }) => (
+                ({ _id, title, description, filePath, fileMimetype }) => (
                   <tr key={_id}>
                     <td className="file-title">{title}</td>
                     <td className="file-description">{description}</td>
@@ -200,7 +200,7 @@ function App () {
                       <a
                         href="#/"
                         onClick={() =>
-                          downloadFile(_id, file_path, file_mimetype)
+                          downloadFile(_id, filePath, fileMimetype)
                         }
                       >
                         Download
