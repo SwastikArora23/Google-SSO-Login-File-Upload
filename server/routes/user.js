@@ -3,6 +3,7 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const User = require('../model/user');
 const Router = express.Router();
+const auth = require('../middleware/userValidator');
 
 Router.post('/signin', async (req, res) => {
     const {googleAccessToken} = req.body;
@@ -41,6 +42,15 @@ Router.post('/signin', async (req, res) => {
         .json({token})
         
    
+});
+
+Router.get('/getUser', auth, async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id);
+      res.send(user);
+    } catch (error) {
+      res.status(400).send('Error while getting details of user. Try again later.');
+    }
 });
 
 module.exports = Router;

@@ -10,7 +10,6 @@ const AppRouter = () => {
     return (
       <BrowserRouter>
         <div className="container">
-          <Header />
           <GoogleOAuthProvider clientId='981927846493-3icf6itrmftk1q5buk3mvvdsf7stf934.apps.googleusercontent.com'>
             <div className="main-content">
               <Route component={Login} path="/" />

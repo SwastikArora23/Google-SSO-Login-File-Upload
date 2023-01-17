@@ -3,6 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const File = require('../model/file');
 const Router = express.Router();
+const auth = require('../middleware/userValidator');
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -30,6 +31,7 @@ const upload = multer({
 
 Router.post(
   '/upload',
+  auth,
   upload.single('file'),
   async (req, res) => {
     try {
@@ -39,7 +41,8 @@ Router.post(
         title,
         description,
         filePath: path,
-        fileMimetype: mimetype
+        fileMimetype: mimetype,
+        userId: req.user._id,
       });
       await file.save();
       res.send('file uploaded successfully.');
@@ -49,9 +52,9 @@ Router.post(
   }
 );
 
-Router.get('/getAllFiles', async (req, res) => {
+Router.get('/getAllFiles', auth, async (req, res) => {
   try {
-    const files = await File.find({});
+    const files = await File.find({ userId: req.user._id }).populate('userId');
     const sortedByCreationDate = files.sort(
       (a, b) => b.createdAt - a.createdAt
     );
@@ -61,7 +64,7 @@ Router.get('/getAllFiles', async (req, res) => {
   }
 });
 
-Router.get('/download/:id', async (req, res) => {
+Router.get('/download/:id', auth, async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
     res.set({

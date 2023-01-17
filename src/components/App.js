@@ -20,7 +20,11 @@ function App () {
   useEffect(() => {
     const getFilesList = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/getAllFiles`);
+        const { data } = await axios.get(`${API_URL}/getAllFiles`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         setErrorMsg('');
         setFilesList(data);
       } catch (error) {
@@ -33,8 +37,13 @@ function App () {
 
   const downloadFile = async (id, path, mimetype) => {
     try {
-      const result = await axios.get(`${API_URL}/download/${id}`, {
-        responseType: 'blob'
+      const result = await axios({
+        url: `${API_URL}/download/${id}`,
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
       });
       const split = path.split('/');
       const filename = split[split.length - 1];
@@ -90,7 +99,8 @@ function App () {
           setErrorMsg('');
           const upload = await axios.post(`${API_URL}/upload`, formData, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('token')}`
             }
           });
 
@@ -186,16 +196,18 @@ function App () {
             <tr>
               <th>Title</th>
               <th>Description</th>
+              <th>Uploaded By</th>
               <th>Download File</th>
             </tr>
           </thead>
           <tbody>
             {filesList.length > 0 ? (
-              filesList.map(
-                ({ _id, title, description, filePath, fileMimetype }) => (
+              (filesList ?? []).map(
+                ({_id, title, description, userId, filePath, fileMimetype}) => (
                   <tr key={_id}>
                     <td className="file-title">{title}</td>
                     <td className="file-description">{description}</td>
+                    <td className="uploaded-by">{userId.firstName + ' ' + userId.lastName}</td>
                     <td>
                       <a
                         href="#/"
