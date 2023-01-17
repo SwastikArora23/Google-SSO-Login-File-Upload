@@ -8,7 +8,7 @@ const auth = require('../middleware/userValidator');
 Router.post('/signin', async (req, res) => {
     const {googleAccessToken} = req.body;
 
-    const userDetails = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+    const userDetails = await axios.get(process.env.GOOGLE_AUTH_API, {
         headers: {
             'Authorization': `Bearer ${googleAccessToken}`
         }
@@ -25,7 +25,7 @@ Router.post('/signin', async (req, res) => {
         const token = jwt.sign({
             email: result.email,
             id: result._id
-        }, 'sdbcdsjfhbdsfdsfvhjdsfhdsfhsghsdkghdskhgdkshfhkdsfhshkfghkgekhghkfsghshfgrw')
+        }, process.env.JWT_SECRET_KEY)
 
         res
             .status(200)
@@ -35,7 +35,7 @@ Router.post('/signin', async (req, res) => {
     const token = jwt.sign({
         email: existingUser.email,
         id: existingUser._id
-    }, 'sdbcdsjfhbdsfdsfvhjdsfhdsfhsghsdkghdskhgdkshfhkdsfhshkfghkgekhghkfsghshfgrw')
+    }, process.env.JWT_SECRET_KEY)
 
     res
         .status(200)

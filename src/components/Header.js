@@ -24,8 +24,6 @@ function Header () {
     getUserDetails();
   }, []);
 
-  console.log(user);
-
   const logout = () => {
     localStorage.removeItem('token');
     window.location.reload();
